@@ -2,7 +2,11 @@ import sqlite3
 
 
 
-def initialDataBase(addr):
+def initialDataBase(addr: str):
+    """
+    param addr:
+    return: 
+    """
     conn = sqlite3.connect(addr)
     cur = conn.cursor()
     with conn:
@@ -19,9 +23,15 @@ def initialDataBase(addr):
                         FOREIGN KEY (word_id) REFERENCES word(id),
                         FOREIGN KEY (url_id) REFERENCES url(id))''')
         return conn
+    return None
 
 
-def getOrCreateUrlId(cursor, url):
+def getOrCreateUrlId(cursor, url: str) -> int:
+    """
+    param cursor:
+    param url:
+    return:
+    """
     cursor.execute('SELECT id FROM url WHERE url = ?', (url,))
     row = cursor.fetchone()
     if row:
@@ -31,7 +41,12 @@ def getOrCreateUrlId(cursor, url):
         return cursor.lastrowid
 
 
-def getOrCreateWordId(cursor, word):
+def getOrCreateWordId(cursor, word:str) -> int:
+    """
+    param cursor:
+    param url:
+    return:
+    """
     cursor.execute('SELECT id FROM word WHERE word = ?', (word,))
     row = cursor.fetchone()
     if row:
@@ -41,13 +56,27 @@ def getOrCreateWordId(cursor, word):
         return cursor.lastrowid
 
 
-def indexWord(cursor, word_id, url_id, position):
-        cursor.execute('INSERT INTO word_index (word_id, url_id, position) VALUES (?, ?, ?)',
+def indexWord(cursor, word_id: int, url_id: int, position: int) -> None:
+    """
+    param cursor:
+    param word_id:
+    param url_id:
+    param position:
+    return: None
+    """    
+    cursor.execute('INSERT INTO word_index (word_id, url_id, position) VALUES (?, ?, ?)',
                           (word_id, url_id, position))
+    return None
 
 
-def indexРage(url, text):
+def indexРage(url: str, text: str) -> bool:
+    """
+    param text:
+    param url:
+    return: 
+    """
     conn = initialDataBase("C:\\PROGRAMS\\Python\\parsing\\Pars\\search_index.db")
+    if conn == None: return False
     cur = conn.cursor()
     with conn:
         url_id = getOrCreateUrlId(cur, url)
@@ -55,11 +84,17 @@ def indexРage(url, text):
         for position, word in enumerate(words):
             word_id = getOrCreateWordId(cur, text)
             indexWord(cur, word_id, url_id, position)
+    return True
 
+
+def filterEnglishWords(word: str) -> bool:
+    for char in word:
+        if ('a' <= char <= 'z' or 'A' <= char <= 'Z'): return False
+    return True
 
 def main():
-    a = "qwe\nrty     qazxsw\n         zxcvv"
-    pass
+    a = "1234"
+    print(filterEnglishWords(a))
     
    
         
