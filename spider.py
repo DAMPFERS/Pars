@@ -1,4 +1,5 @@
 import requests
+import DataBase
 from bs4 import BeautifulSoup as BS
 
 
@@ -59,6 +60,7 @@ def main():
                     page = getPage(url, html)
                     next_URLs.update(page["Links"])
                     browsing_history.add(url)
+                    DataBase.indexРage(url, page["Text"])
         current_URLs = next_URLs
         
 
